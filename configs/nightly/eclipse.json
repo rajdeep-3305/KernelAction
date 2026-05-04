@@ -18,9 +18,9 @@
     },
     "kernelsu": {
       "enable": true,
-      "setupLink": "https://raw.githubusercontent.com/DPR-MoonWake/RKSU/refs/heads/susfs-rksu-master/kernel/setup.sh",
-      "setupArg": "susfs-rksu-master",
-      "setupName": "KernelSU",
+      "setupLink": "http://raw.githubusercontent.com/rajdeep-3305/ksun-exp/refs/heads/legacy-susfs-v2/kernel/setup.sh",
+      "setupArg": "legacy-susfs-v2",
+      "setupName": "ksun-exp",
       "needPatch": false,
       "susfsLink": ""
     },
