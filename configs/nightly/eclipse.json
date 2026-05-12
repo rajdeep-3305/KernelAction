@@ -18,7 +18,7 @@
     },
     "kernelsu": {
       "enable": true,
-      "setupLink": "http://raw.githubusercontent.com/rajdeep-3305/KernelSU-Next/refs/heads/legacy-susfs-v2/kernel/setup.sh",
+      "setupLink": "https://raw.githubusercontent.com/rajdeep-3305/KernelSU-Next/refs/heads/legacy-susfs-v2/kernel/setup.sh",
       "setupArg": "legacy-susfs-v2",
       "setupName": "KernelSU-Next",
       "needPatch": false,
