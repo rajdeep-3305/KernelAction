@@ -14,6 +14,11 @@ on:
         options:
           - release
           - nightly
+      config_file:
+        description: "Name of the JSON config file inside configs/<config_type>/ to use"
+        required: true
+        type: string
+        default: "eclipse.json"
       full_dump:
         description: "Create a full dump .zip file for this run?"
         required: true
@@ -29,7 +34,7 @@ permissions:
 
 jobs:
   Set-repos:
-    name: "Parse eclipse.json"
+    name: "Parse config"
     runs-on: ubuntu-24.04
     outputs:
       repos: ${{ steps.generate-matrix.outputs.repos }}
@@ -38,14 +43,27 @@ jobs:
       - name: "Checkout"
         uses: actions/checkout@v4
 
-      - name: "Generate Matrix from eclipse.json"
+      - name: "Generate Matrix from config"
         id: generate-matrix
         run: |
           CONFIG_TYPE="${{ github.event.inputs.config_type }}"
-          CONFIG_PATH="./configs/$CONFIG_TYPE/eclipse.json"
+          CONFIG_FILE="${{ github.event.inputs.config_file }}"
+
+          if [[ "$CONFIG_FILE" != *.json ]]; then
+            echo "ERROR: config_file must end in .json (got '$CONFIG_FILE')" >&2
+            exit 1
+          fi
+          if [[ "$CONFIG_FILE" == */* || "$CONFIG_FILE" == *".."* ]]; then
+            echo "ERROR: config_file must be a plain filename, no paths (got '$CONFIG_FILE')" >&2
+            exit 1
+          fi
+
+          CONFIG_PATH="./configs/$CONFIG_TYPE/$CONFIG_FILE"
 
           if [ ! -f "$CONFIG_PATH" ]; then
             echo "ERROR: Config file '$CONFIG_PATH' does not exist!" >&2
+            echo "Available files in ./configs/$CONFIG_TYPE/:" >&2
+            ls -1 "./configs/$CONFIG_TYPE" >&2 || true
             exit 1
           fi
 
@@ -444,6 +462,7 @@ jobs:
           echo "| Field | Value |" >> $GITHUB_STEP_SUMMARY
           echo "|---|---|" >> $GITHUB_STEP_SUMMARY
           echo "| Status | \`$STATUS\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Config file | \`${{ github.event.inputs.config_file }}\` |" >> $GITHUB_STEP_SUMMARY
           echo "| Device | \`${{ env.KERNEL_DEVICE }}\` |" >> $GITHUB_STEP_SUMMARY
           echo "| Config type | \`${{ github.event.inputs.config_type }}\` |" >> $GITHUB_STEP_SUMMARY
           echo "| Defconfig | \`${{ env.DEFCONFIG_NAME }}\` |" >> $GITHUB_STEP_SUMMARY
